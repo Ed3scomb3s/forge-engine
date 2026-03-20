@@ -1,0 +1,855 @@
+{
+  "bootstrap_tests": [
+    {
+      "rl_agent": "DQN",
+      "baseline_strategy": "SMACross",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "DQN",
+      "baseline_strategy": "RSIReversal",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "DQN",
+      "baseline_strategy": "BollingerBand",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "DQN",
+      "baseline_strategy": "MACDMomentum",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO",
+      "baseline_strategy": "SMACross",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO",
+      "baseline_strategy": "RSIReversal",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO",
+      "baseline_strategy": "BollingerBand",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO",
+      "baseline_strategy": "MACDMomentum",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO_v3",
+      "baseline_strategy": "SMACross",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO_v3",
+      "baseline_strategy": "RSIReversal",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO_v3",
+      "baseline_strategy": "BollingerBand",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO_v3",
+      "baseline_strategy": "MACDMomentum",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO_v4",
+      "baseline_strategy": "SMACross",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO_v4",
+      "baseline_strategy": "RSIReversal",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO_v4",
+      "baseline_strategy": "BollingerBand",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO_v4",
+      "baseline_strategy": "MACDMomentum",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO_v5",
+      "baseline_strategy": "SMACross",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO_v5",
+      "baseline_strategy": "RSIReversal",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO_v5",
+      "baseline_strategy": "BollingerBand",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO_v5",
+      "baseline_strategy": "MACDMomentum",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO_v6",
+      "baseline_strategy": "SMACross",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "observed_diff": 1.19644654319511,
+      "mean_diff": 1.2097043613995102,
+      "ci_lower": -0.4791223587738568,
+      "ci_upper": 2.877998488430941,
+      "p_value": 0.1556,
+      "significant": false
+    },
+    {
+      "rl_agent": "PPO_v6",
+      "baseline_strategy": "RSIReversal",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "observed_diff": 0.03658593361237705,
+      "mean_diff": 0.04030654263246386,
+      "ci_lower": -0.6896101136706073,
+      "ci_upper": 0.7721383053769197,
+      "p_value": 0.9188,
+      "significant": false
+    },
+    {
+      "rl_agent": "PPO_v6",
+      "baseline_strategy": "BollingerBand",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "observed_diff": -0.1514551517659951,
+      "mean_diff": -0.18129750158211144,
+      "ci_lower": -3.024848346010953,
+      "ci_upper": 2.648968511346105,
+      "p_value": 0.8964,
+      "significant": false
+    },
+    {
+      "rl_agent": "PPO_v6",
+      "baseline_strategy": "MACDMomentum",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "observed_diff": -0.5578595597223648,
+      "mean_diff": -0.5518902773571359,
+      "ci_lower": -2.598795383493628,
+      "ci_upper": 1.4626364840395394,
+      "p_value": 0.6022,
+      "significant": false
+    },
+    {
+      "rl_agent": "SAC_v4",
+      "baseline_strategy": "SMACross",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "SAC_v4",
+      "baseline_strategy": "RSIReversal",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "SAC_v4",
+      "baseline_strategy": "BollingerBand",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "SAC_v4",
+      "baseline_strategy": "MACDMomentum",
+      "symbol": "BTCUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "DQN",
+      "baseline_strategy": "SMACross",
+      "symbol": "ZECUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "DQN",
+      "baseline_strategy": "RSIReversal",
+      "symbol": "ZECUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "DQN",
+      "baseline_strategy": "BollingerBand",
+      "symbol": "ZECUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "DQN",
+      "baseline_strategy": "MACDMomentum",
+      "symbol": "ZECUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO",
+      "baseline_strategy": "SMACross",
+      "symbol": "ZECUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO",
+      "baseline_strategy": "RSIReversal",
+      "symbol": "ZECUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO",
+      "baseline_strategy": "BollingerBand",
+      "symbol": "ZECUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    },
+    {
+      "rl_agent": "PPO",
+      "baseline_strategy": "MACDMomentum",
+      "symbol": "ZECUSDT_PERP",
+      "period": "holdout",
+      "error": "rl_holdout_curve_missing"
+    }
+  ],
+  "seed_stability": {
+    "DQN_BTCUSDT_PERP": {
+      "sharpe": {
+        "mean": -0.48285333333333336,
+        "std": 0.4884451659432544,
+        "cv": 1.011580809790249,
+        "n_seeds": 3,
+        "values": [
+          -0.7613399999999999,
+          -0.76836,
+          0.08114000000000002
+        ]
+      },
+      "sortino": {
+        "mean": -0.46671999999999997,
+        "std": 0.3898967160672169,
+        "cv": 0.8353974890024359,
+        "n_seeds": 3,
+        "values": [
+          -0.64706,
+          -0.7337999999999999,
+          -0.01930000000000006
+        ]
+      },
+      "max_dd_pct": {
+        "mean": 3.6846666666666668,
+        "std": 0.20537120862801914,
+        "cv": 0.05573671303456282,
+        "n_seeds": 3,
+        "values": [
+          3.636,
+          3.508,
+          3.91
+        ]
+      },
+      "pnl_pct": {
+        "mean": -0.6733333333333335,
+        "std": 0.7026359892101552,
+        "cv": 1.043518795856666,
+        "n_seeds": 3,
+        "values": [
+          -1.2480000000000002,
+          -0.882,
+          0.11000000000000001
+        ]
+      }
+    },
+    "PPO_BTCUSDT_PERP": {
+      "sharpe": {
+        "mean": 0.6509866666666667,
+        "std": 0.2554410870109453,
+        "cv": 0.3923906588116684,
+        "n_seeds": 3,
+        "values": [
+          0.73726,
+          0.85212,
+          0.36358
+        ]
+      },
+      "sortino": {
+        "mean": 0.9160399999999999,
+        "std": 0.2876642814115092,
+        "cv": 0.31403026222818786,
+        "n_seeds": 3,
+        "values": [
+          0.9923999999999997,
+          1.1578199999999998,
+          0.5979
+        ]
+      },
+      "max_dd_pct": {
+        "mean": 3.090666666666666,
+        "std": 0.5846890911701133,
+        "cv": 0.18917895529662856,
+        "n_seeds": 3,
+        "values": [
+          2.468,
+          3.176,
+          3.6279999999999992
+        ]
+      },
+      "pnl_pct": {
+        "mean": 0.6253333333333333,
+        "std": 0.3245263214799892,
+        "cv": 0.5189653328571256,
+        "n_seeds": 3,
+        "values": [
+          0.44400000000000006,
+          1.0,
+          0.43200000000000005
+        ]
+      }
+    },
+    "PPO_v3_BTCUSDT_PERP": {
+      "sharpe": {
+        "mean": 0.4755466666666666,
+        "std": 0.28880607357417765,
+        "cv": 0.6073138428212674,
+        "n_seeds": 3,
+        "values": [
+          0.80246,
+          0.25504,
+          0.36913999999999997
+        ]
+      },
+      "sortino": {
+        "mean": 0.6882266666666667,
+        "std": 0.4088004933134662,
+        "cv": 0.5939910688050442,
+        "n_seeds": 3,
+        "values": [
+          1.1461599999999998,
+          0.36005999999999994,
+          0.55846
+        ]
+      },
+      "max_dd_pct": {
+        "mean": 3.142666666666667,
+        "std": 0.2097649478185842,
+        "cv": 0.06674743778699115,
+        "n_seeds": 3,
+        "values": [
+          3.194,
+          2.912,
+          3.322
+        ]
+      },
+      "pnl_pct": {
+        "mean": 0.5126666666666667,
+        "std": 0.4079624165696313,
+        "cv": 0.795765441943364,
+        "n_seeds": 3,
+        "values": [
+          0.9460000000000001,
+          0.13599999999999995,
+          0.45600000000000007
+        ]
+      }
+    },
+    "PPO_v4_BTCUSDT_PERP": {
+      "sharpe": {
+        "mean": -0.41455333333333333,
+        "std": 0.6503116269399873,
+        "cv": 1.5687043732370278,
+        "n_seeds": 3,
+        "values": [
+          -0.1025,
+          -1.16208,
+          0.020920000000000005
+        ]
+      },
+      "sortino": {
+        "mean": -0.49116666666666675,
+        "std": 0.9013693729727749,
+        "cv": 1.8351599042540374,
+        "n_seeds": 3,
+        "values": [
+          -0.04524000000000013,
+          -1.52858,
+          0.10031999999999996
+        ]
+      },
+      "max_dd_pct": {
+        "mean": 15.611333333333334,
+        "std": 1.0494843178120064,
+        "cv": 0.06722579650330997,
+        "n_seeds": 3,
+        "values": [
+          15.528,
+          16.7,
+          14.606
+        ]
+      },
+      "pnl_pct": {
+        "mean": 1.2246666666666666,
+        "std": 1.8304888236024093,
+        "cv": 1.4946833072420327,
+        "n_seeds": 3,
+        "values": [
+          2.7719999999999994,
+          -0.796,
+          1.6980000000000004
+        ]
+      }
+    },
+    "PPO_v6_BTCUSDT_PERP": {
+      "sharpe": {
+        "mean": -0.30179333333333325,
+        "std": 0.8079997832507959,
+        "cv": 2.6773281381877094,
+        "n_seeds": 3,
+        "values": [
+          0.3673400000000001,
+          -1.1994399999999998,
+          -0.07328000000000001
+        ]
+      },
+      "sortino": {
+        "mean": -0.35071333333333343,
+        "std": 1.01914389275182,
+        "cv": 2.905917157655311,
+        "n_seeds": 3,
+        "values": [
+          0.5017399999999997,
+          -1.47954,
+          -0.07433999999999999
+        ]
+      },
+      "max_dd_pct": {
+        "mean": 5.346,
+        "std": 0.7482539675805271,
+        "cv": 0.1399652015676257,
+        "n_seeds": 3,
+        "values": [
+          6.208,
+          4.965999999999999,
+          4.864
+        ]
+      },
+      "pnl_pct": {
+        "mean": -0.5066666666666665,
+        "std": 1.7647575848635226,
+        "cv": 3.4830741806516907,
+        "n_seeds": 3,
+        "values": [
+          -0.10999999999999979,
+          -2.436,
+          1.0260000000000002
+        ]
+      }
+    },
+    "DQN_ZECUSDT_PERP": {
+      "sharpe": {
+        "mean": -1.2586799999999998,
+        "std": 0.340982559084772,
+        "cv": 0.27090488375502275,
+        "n_seeds": 3,
+        "values": [
+          -1.6173199999999999,
+          -1.22008,
+          -0.9386399999999998
+        ]
+      },
+      "sortino": {
+        "mean": -1.1281666666666668,
+        "std": 0.26651452893479055,
+        "cv": 0.23623684053903726,
+        "n_seeds": 3,
+        "values": [
+          -1.39306,
+          -1.1313799999999998,
+          -0.86006
+        ]
+      },
+      "max_dd_pct": {
+        "mean": 20.665333333333333,
+        "std": 2.349621529807159,
+        "cv": 0.11369869974549128,
+        "n_seeds": 3,
+        "values": [
+          22.106,
+          21.936,
+          17.954
+        ]
+      },
+      "pnl_pct": {
+        "mean": -8.49,
+        "std": 1.9052842307645328,
+        "cv": 0.2244151037414055,
+        "n_seeds": 3,
+        "values": [
+          -10.414,
+          -8.452,
+          -6.604000000000001
+        ]
+      }
+    },
+    "PPO_ZECUSDT_PERP": {
+      "sharpe": {
+        "mean": -0.14818666666666672,
+        "std": 0.4760408488074666,
+        "cv": 3.2124404949217187,
+        "n_seeds": 3,
+        "values": [
+          -0.59742,
+          -0.19790000000000002,
+          0.3507599999999999
+        ]
+      },
+      "sortino": {
+        "mean": -0.043906666666666684,
+        "std": 0.5370323082770099,
+        "cv": 12.231224755777626,
+        "n_seeds": 3,
+        "values": [
+          -0.55778,
+          -0.08756000000000004,
+          0.5136200000000001
+        ]
+      },
+      "max_dd_pct": {
+        "mean": 14.058000000000002,
+        "std": 1.5308820986607692,
+        "cv": 0.10889757423963359,
+        "n_seeds": 3,
+        "values": [
+          14.118,
+          15.558000000000002,
+          12.498000000000001
+        ]
+      },
+      "pnl_pct": {
+        "mean": -1.9986666666666666,
+        "std": 2.123191308698614,
+        "cv": 1.0623038569205874,
+        "n_seeds": 3,
+        "values": [
+          -3.7960000000000003,
+          -2.5439999999999996,
+          0.344
+        ]
+      }
+    }
+  },
+  "fold_consistency": {
+    "DQN_BTCUSDT_PERP": {
+      "n_folds": 5,
+      "sharpe": {
+        "mean": -0.4828599999999999,
+        "std": 1.1105805432295308,
+        "min": -2.2337,
+        "max": 0.8332,
+        "range": 3.0669,
+        "values": [
+          -0.1344,
+          -0.5137,
+          0.8332,
+          -2.2337,
+          -0.3657
+        ],
+        "positive_ratio": 0.2
+      },
+      "pnl_pct": {
+        "mean": -0.67332,
+        "std": 1.4927821716513097,
+        "values": [
+          -0.1033,
+          -0.7433,
+          1.0367,
+          -3.0467,
+          -0.51
+        ]
+      }
+    },
+    "PPO_BTCUSDT_PERP": {
+      "n_folds": 5,
+      "sharpe": {
+        "mean": 0.651,
+        "std": 0.8977550556805569,
+        "min": -0.0641,
+        "max": 2.2015,
+        "range": 2.2655999999999996,
+        "values": [
+          0.2037,
+          -0.0641,
+          0.5855,
+          2.2015,
+          0.3284
+        ],
+        "positive_ratio": 0.8
+      },
+      "pnl_pct": {
+        "mean": 0.62534,
+        "std": 0.9365933071509747,
+        "values": [
+          0.23,
+          -0.2833,
+          0.7133,
+          2.1767,
+          0.29
+        ]
+      }
+    },
+    "PPO_v3_BTCUSDT_PERP": {
+      "n_folds": 5,
+      "sharpe": {
+        "mean": 0.47553999999999996,
+        "std": 1.2772895376538556,
+        "min": -0.4575,
+        "max": 2.6537,
+        "range": 3.1112,
+        "values": [
+          0.3874,
+          -0.4575,
+          -0.4449,
+          2.6537,
+          0.239
+        ],
+        "positive_ratio": 0.6
+      },
+      "pnl_pct": {
+        "mean": 0.51268,
+        "std": 1.5165180404466014,
+        "values": [
+          0.4967,
+          -0.56,
+          -0.6533,
+          3.08,
+          0.2
+        ]
+      }
+    },
+    "PPO_v4_BTCUSDT_PERP": {
+      "n_folds": 5,
+      "sharpe": {
+        "mean": -0.4145600000000001,
+        "std": 3.278216352378226,
+        "min": -4.6041,
+        "max": 4.0794,
+        "range": 8.683499999999999,
+        "values": [
+          4.0794,
+          -4.6041,
+          -2.079,
+          1.144,
+          -0.6131
+        ],
+        "positive_ratio": 0.4
+      },
+      "pnl_pct": {
+        "mean": 1.2246599999999996,
+        "std": 22.427419557831435,
+        "values": [
+          35.8133,
+          -25.39,
+          -6.4467,
+          5.99,
+          -3.8433
+        ]
+      }
+    },
+    "PPO_v5_BTCUSDT_PERP": {
+      "n_folds": 1,
+      "sharpe": {
+        "mean": -0.5805,
+        "std": 0.0,
+        "min": -0.5805,
+        "max": -0.5805,
+        "range": 0.0,
+        "values": [
+          -0.5805
+        ],
+        "positive_ratio": 0.0
+      },
+      "pnl_pct": {
+        "mean": -6.85,
+        "std": 0.0,
+        "values": [
+          -6.85
+        ]
+      }
+    },
+    "PPO_v6_BTCUSDT_PERP": {
+      "n_folds": 5,
+      "sharpe": {
+        "mean": -0.30180000000000007,
+        "std": 1.9112417442594751,
+        "min": -2.8006,
+        "max": 1.883,
+        "range": 4.6836,
+        "values": [
+          1.883,
+          -2.8006,
+          0.2075,
+          0.8881,
+          -1.687
+        ],
+        "positive_ratio": 0.6
+      },
+      "pnl_pct": {
+        "mean": -0.5066399999999998,
+        "std": 4.950637259787874,
+        "values": [
+          5.7567,
+          -6.6633,
+          0.27,
+          2.2067,
+          -4.1033
+        ]
+      }
+    },
+    "SAC_v4_BTCUSDT_PERP": {
+      "n_folds": 5,
+      "sharpe": {
+        "mean": -1.8203,
+        "std": 2.128938698037123,
+        "min": -3.9149,
+        "max": 1.771,
+        "range": 5.6859,
+        "values": [
+          1.771,
+          -2.564,
+          -2.133,
+          -3.9149,
+          -2.2606
+        ],
+        "positive_ratio": 0.2
+      },
+      "pnl_pct": {
+        "mean": -2.87666,
+        "std": 7.321043387250208,
+        "values": [
+          10.0,
+          -8.1,
+          -4.4,
+          -6.25,
+          -5.6333
+        ]
+      }
+    },
+    "DQN_ZECUSDT_PERP": {
+      "n_folds": 5,
+      "sharpe": {
+        "mean": -1.25866,
+        "std": 1.0482718793328378,
+        "min": -2.4059,
+        "max": -0.2192,
+        "range": 2.1867,
+        "values": [
+          -0.4747,
+          -0.8366,
+          -2.3569,
+          -2.4059,
+          -0.2192
+        ],
+        "positive_ratio": 0.0
+      },
+      "pnl_pct": {
+        "mean": -8.489999999999998,
+        "std": 5.879993698125875,
+        "values": [
+          -4.1667,
+          -4.7633,
+          -15.1567,
+          -14.6733,
+          -3.69
+        ]
+      }
+    },
+    "PPO_ZECUSDT_PERP": {
+      "n_folds": 5,
+      "sharpe": {
+        "mean": -0.14818,
+        "std": 1.1077140005434616,
+        "min": -1.5089,
+        "max": 1.4943,
+        "range": 3.0031999999999996,
+        "values": [
+          -0.2432,
+          1.4943,
+          -1.5089,
+          0.1661,
+          -0.6492
+        ],
+        "positive_ratio": 0.4
+      },
+      "pnl_pct": {
+        "mean": -1.9986600000000003,
+        "std": 5.330691974124935,
+        "values": [
+          -2.4767,
+          5.38,
+          -9.17,
+          0.0767,
+          -3.8033
+        ]
+      }
+    }
+  }
+}

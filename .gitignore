@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.venv/
+uv.lock
+
+# Data (raw CSVs are excluded; use the zip archives in data/)
+data/*.csv
+data/_index/
+data/.forge_cache/
+
+# Rust build artifacts
+target/
+Cargo.lock
+*.pyd
+*.so
+*.dylib
+
+# RL model artifacts and TensorBoard logs
+examples_rl/**/model*
+examples_rl/**/*_model*
+examples_rl/**/tb_logs/
+
+# Evaluation intermediaries
+evaluation/results/*_checkpoint.json
+evaluation/results/*_worker*.json
+evaluation/results/*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
