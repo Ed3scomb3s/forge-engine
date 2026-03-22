@@ -66,6 +66,7 @@ def _action_type_and_config(asd: ActionSpace) -> Tuple[str, dict]:
         }
     if isinstance(asd, DiscreteActionsWithSizing):
         return "discrete_with_sizing", {
+            "sizes": list(asd.sizes.values()),
             "sl_pct": asd.sl_pct,
             "tp_pct": asd.tp_pct,
         }
@@ -119,6 +120,22 @@ def _extract_action_val(action: Any) -> float:
     if isinstance(action, (list, tuple)):
         return float(action[0])
     return float(action)
+
+
+def _parse_macd_spec(spec: str) -> Optional[Tuple[int, int, int]]:
+    parts = spec.strip().lower().split("_")
+    if len(parts) == 2 and parts[0] == "macd" and parts[1] in ("line", "signal", "hist"):
+        return 12, 26, 9
+    if (
+        len(parts) == 5
+        and parts[0] == "macd"
+        and parts[1] in ("line", "signal", "hist")
+    ):
+        try:
+            return int(parts[2]), int(parts[3]), int(parts[4])
+        except ValueError:
+            return None
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -316,6 +333,21 @@ class ForgeEnv(gym.Env):
                 period = int(s.split("_")[1])
                 eng.register_sma(f"SMA({period})[close]", period, "close")
                 seen.add(s)
+
+            else:
+                macd_spec = _parse_macd_spec(s)
+                if macd_spec:
+                    fast, slow, signal = macd_spec
+                    key = f"macd_{fast}_{slow}_{signal}"
+                    if key not in seen:
+                        eng.register_macd(
+                            f"MACD({fast},{slow},{signal})[close]",
+                            fast,
+                            slow,
+                            signal,
+                            "close",
+                        )
+                        seen.add(key)
 
     # ------------------------------------------------------------------
     # reset / step

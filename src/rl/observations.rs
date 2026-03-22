@@ -147,6 +147,7 @@ pub enum ObsFeatureType {
     Drawdown(DrawdownState),
     IndicatorObs(IndicatorObsConfig),
     SmaRatio(SmaRatioConfig),
+    MacdNormalized(MacdNormalizedConfig),
     VolumeProfile,
 }
 
@@ -161,6 +162,7 @@ impl ObsFeatureType {
             Self::Drawdown(_) => 1,
             Self::IndicatorObs(_) => 1,
             Self::SmaRatio(_) => 1,
+            Self::MacdNormalized(_) => 1,
             Self::VolumeProfile => 2,
         }
     }
@@ -182,6 +184,7 @@ impl ObsFeatureType {
             Self::Drawdown(dd) => observe_drawdown(state, dd, out),
             Self::IndicatorObs(cfg) => observe_indicator(indicators, cfg, out),
             Self::SmaRatio(cfg) => observe_sma_ratio(indicators, cfg, out),
+            Self::MacdNormalized(cfg) => observe_macd_normalized(candle, indicators, cfg, out),
             Self::VolumeProfile => observe_volume_profile(candle, history, out),
         }
     }
@@ -203,6 +206,7 @@ impl ObsFeatureType {
             Self::Drawdown(_) => vec![0.0],
             Self::IndicatorObs(_) => vec![0.0],
             Self::SmaRatio(_) => vec![-0.5],
+            Self::MacdNormalized(_) => vec![-10.0],
             Self::VolumeProfile => vec![0.0, -1.0],
         }
     }
@@ -217,6 +221,7 @@ impl ObsFeatureType {
             Self::Drawdown(_) => vec![1.0],
             Self::IndicatorObs(_) => vec![1.0],
             Self::SmaRatio(_) => vec![0.5],
+            Self::MacdNormalized(_) => vec![10.0],
             Self::VolumeProfile => vec![1.0, 5.0],
         }
     }
@@ -274,6 +279,35 @@ impl SmaRatioConfig {
             fast_key: format!("SMA({})[close]", fast),
             slow_key: format!("SMA({})[close]", slow),
         }
+    }
+}
+
+pub struct MacdNormalizedConfig {
+    pub key: String,
+}
+
+impl MacdNormalizedConfig {
+    pub fn from_spec(spec: &str) -> Option<Self> {
+        let lowered = spec.trim().to_lowercase();
+        let parts: Vec<&str> = lowered.split('_').collect();
+        let (component, fast, slow, signal) = match parts.as_slice() {
+            ["macd", component] if matches!(*component, "line" | "signal" | "hist") => {
+                (*component, 12usize, 26usize, 9usize)
+            }
+            ["macd", component, fast, slow, signal]
+                if matches!(*component, "line" | "signal" | "hist") =>
+            {
+                let fast = fast.parse::<usize>().ok()?;
+                let slow = slow.parse::<usize>().ok()?;
+                let signal = signal.parse::<usize>().ok()?;
+                (*component, fast, slow, signal)
+            }
+            _ => return None,
+        };
+
+        Some(Self {
+            key: format!("MACD({},{},{})[close].{}", fast, slow, signal, component),
+        })
     }
 }
 
@@ -479,6 +513,18 @@ fn observe_sma_ratio(
         }
         _ => out.push(0.0),
     }
+}
+
+fn observe_macd_normalized(
+    candle: &RawCandle,
+    indicators: &BTreeMap<String, f64>,
+    cfg: &MacdNormalizedConfig,
+    out: &mut Vec<f32>,
+) {
+    let raw = indicators.get(&cfg.key).copied().unwrap_or(0.0);
+    let close = candle.close.max(EPS);
+    let normalized_pct = (raw / close) * 100.0;
+    out.push((normalized_pct as f32).clamp(-10.0, 10.0));
 }
 
 fn observe_volume_profile(candle: &RawCandle, history: &ObsHistory, out: &mut Vec<f32>) {

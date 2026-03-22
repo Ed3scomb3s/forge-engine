@@ -86,6 +86,16 @@ class TestSetupRlEnv:
         )
         assert result[0] == 6  # ohlcv=5 + indicator=1
 
+    def test_macd_obs(self):
+        eng = make_engine()
+        eng.register_macd("MACD(12,26,9)[close]", 12, 26, 9, "close")
+        result = eng.setup_rl_env(
+            "discrete",
+            ["ohlcv", "macd_hist_12_26_9"],
+            "sortino",
+        )
+        assert result[0] == 6  # ohlcv=5 + MACD hist=1
+
     def test_sma_ratio(self):
         eng = make_engine()
         eng.register_sma("SMA(20)[close]", 20)
@@ -360,6 +370,20 @@ class TestObservations:
         assert obs.shape == (2,)
         # buy_ratio = 400/1000 = 0.4
         assert abs(obs[0] - 0.4) < 1e-4
+
+    def test_macd_feature_eventually_nonzero(self):
+        eng = make_engine()
+        eng.register_macd("MACD(12,26,9)[close]", 12, 26, 9, "close")
+        eng.setup_rl_env("discrete", ["macd_hist_12_26_9"], "pnl")
+
+        obs = None
+        for i in range(60):
+            price = 50000 + (i * i * 5)
+            candle = make_candle(1000000 + i * 60, price, price + 100, price - 100, price)
+            obs, _, _, _, _ = eng.step_rl(0.0, candle)
+
+        assert obs is not None
+        assert abs(float(obs[0])) > 0.0
 
 
 # ---------------------------------------------------------------------------

@@ -176,10 +176,10 @@ pub struct DiscreteWithSizingSpace {
 }
 
 impl DiscreteWithSizingSpace {
-    /// Build from a list of (label, margin_pct) pairs, e.g. [("small", 0.05), ("medium", 0.1)].
-    pub fn new(sizes: &[(&str, f64)], sl_pct: f64, tp_pct: f64) -> Self {
+    /// Build from a list of margin percentages, e.g. [0.05, 0.1, 0.2].
+    pub fn new(sizes: &[f64], sl_pct: f64, tp_pct: f64) -> Self {
         let mut actions = vec![SizedAction::Hold];
-        for (_label, mpct) in sizes {
+        for mpct in sizes {
             actions.push(SizedAction::OpenLong(*mpct));
             actions.push(SizedAction::OpenShort(*mpct));
         }
@@ -192,11 +192,7 @@ impl DiscreteWithSizingSpace {
     }
 
     pub fn default() -> Self {
-        Self::new(
-            &[("small", 0.05), ("medium", 0.1), ("large", 0.2)],
-            0.0,
-            0.0,
-        )
+        Self::new(&[0.05, 0.1, 0.2], 0.0, 0.0)
     }
 
     fn translate(&self, engine: &mut RustTradingEngine, action_val: f64, close_price: f64) {

@@ -377,6 +377,42 @@ class SMA_Ratio(ObsFeature):
 
 
 @dataclass
+class MACDNormalized(ObsFeature):
+    """MACD component expressed as a percentage of the current close price."""
+
+    component: str = "hist"
+    fast: int = 12
+    slow: int = 26
+    signal: int = 9
+
+    def __post_init__(self):
+        component = self.component.strip().lower()
+        if component not in {"line", "signal", "hist"}:
+            raise ValueError(f"Invalid MACD component: {self.component}")
+        self.component = component
+
+    def name(self) -> str:
+        return f"macd_{self.component}_{self.fast}_{self.slow}_{self.signal}"
+
+    def size(self) -> int:
+        return 1
+
+    def low(self) -> np.ndarray:
+        return np.array([-10.0], dtype=np.float32)
+
+    def high(self) -> np.ndarray:
+        return np.array([10.0], dtype=np.float32)
+
+    def observe(self, candle: dict, state: dict, history: _ObsHistory) -> np.ndarray:
+        inds = state.get("indicators") or {}
+        key = f"MACD({self.fast},{self.slow},{self.signal})[close].{self.component}"
+        raw = float(inds.get(key, 0.0) or 0.0)
+        close = float(candle.get("close", 1.0) or 1.0)
+        value = (raw / max(close, 1e-10)) * 100.0
+        return np.array([np.clip(value, -10.0, 10.0)], dtype=np.float32)
+
+
+@dataclass
 class VolumeProfile(ObsFeature):
     """Volume features: [taker_buy_ratio, volume_change_ratio].
 
@@ -435,6 +471,22 @@ _FEATURE_REGISTRY: Dict[str, Type[ObsFeature]] = {
 }
 
 
+def _parse_macd_spec(spec: str) -> Optional[Tuple[str, int, int, int]]:
+    parts = spec.strip().lower().split("_")
+    if len(parts) == 2 and parts[0] == "macd" and parts[1] in ("line", "signal", "hist"):
+        return parts[1], 12, 26, 9
+    if (
+        len(parts) == 5
+        and parts[0] == "macd"
+        and parts[1] in ("line", "signal", "hist")
+    ):
+        try:
+            return parts[1], int(parts[2]), int(parts[3]), int(parts[4])
+        except ValueError:
+            return None
+    return None
+
+
 def resolve_features(specs: Sequence[Any]) -> List[ObsFeature]:
     """Convert a list of feature specs into ObsFeature instances.
 
@@ -473,6 +525,19 @@ def resolve_features(specs: Sequence[Any]) -> List[ObsFeature]:
                     continue
                 except ValueError:
                     pass
+
+        macd_spec = _parse_macd_spec(s)
+        if macd_spec:
+            component, fast, slow, signal = macd_spec
+            features.append(
+                MACDNormalized(
+                    component=component,
+                    fast=fast,
+                    slow=slow,
+                    signal=signal,
+                )
+            )
+            continue
 
         # Indicator shorthand: "rsi_14", "sma_20", "ema_50", "atr_14"
         if "_" in s:

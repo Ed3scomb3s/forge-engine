@@ -9,6 +9,7 @@ import os
 import io
 import json
 import hashlib
+import zipfile
 from uuid import UUID, uuid4
 from .indexer import ensure_index, find_seek_offset as _idx_find
 import numpy as np
@@ -64,6 +65,33 @@ def _coerce_ts(ts: str) -> str:
         return ts
 
 
+def _extract_data_member_from_zip(data_dir: str, symbol: str, member_name: str) -> str:
+    """Materialize a shipped zip member on demand."""
+    out_path = os.path.join(data_dir, member_name)
+    if os.path.exists(out_path):
+        return out_path
+
+    archive_path = os.path.join(data_dir, f"{symbol}.zip")
+    if not os.path.exists(archive_path):
+        return out_path
+
+    try:
+        with zipfile.ZipFile(archive_path, "r") as zf:
+            if member_name not in zf.namelist():
+                return out_path
+            zf.extract(member_name, data_dir)
+    except Exception:
+        return out_path
+
+    return out_path
+
+
+def _resolve_base_csv_path(symbol: str, base_timeframe: str, data_dir: str) -> str:
+    return _extract_data_member_from_zip(
+        data_dir, symbol, f"{symbol}_{base_timeframe}.csv"
+    )
+
+
 
 def _parse_timeframe_to_minutes(tf: str) -> int:
     """Convert timeframe strings like '1m', '5m', '1h', '4h', '1d' to minutes."""
@@ -117,7 +145,9 @@ def _load_funding_data(symbol: str, data_dir: str) -> Optional[Dict[str, float]]
     if "PERP" not in symbol.upper():
         return None
 
-    funding_file = os.path.join(data_dir, f"{symbol}_funding.csv")
+    funding_file = _extract_data_member_from_zip(
+        data_dir, symbol, f"{symbol}_funding.csv"
+    )
     if not os.path.exists(funding_file):
         return None
 
@@ -252,8 +282,9 @@ def get_intra_candles(session: Session, start_time: str, end_time: str) -> List[
     Returns:
         List of 1m candle dicts with open_time, open, high, low, close
     """
-    base_filename = f"{session.symbol}_{session.base_timeframe}.csv"
-    base_file = os.path.join(session.data_dir, base_filename)
+    base_file = _resolve_base_csv_path(
+        session.symbol, session.base_timeframe, session.data_dir
+    )
 
     if not os.path.exists(base_file):
         return []
@@ -394,8 +425,9 @@ def _iter_aggregated_candles(
         }
       }
     """
-    base_filename = f"{session.symbol}_{session.base_timeframe}.csv"
-    base_file = os.path.join(session.data_dir, base_filename)
+    base_file = _resolve_base_csv_path(
+        session.symbol, session.base_timeframe, session.data_dir
+    )
     if not os.path.exists(base_file):
         raise FileNotFoundError(f"Data file not found: {base_file}")
 
@@ -1037,8 +1069,7 @@ def preload_candle_data_memmap(
     warmup_minutes = warmup_candles * timeframe_minutes
     read_from = sdt - timedelta(minutes=warmup_minutes)
 
-    base_filename = f"{symbol}_{base_timeframe}.csv"
-    base_file = os.path.join(data_dir, base_filename)
+    base_file = _resolve_base_csv_path(symbol, base_timeframe, data_dir)
     if not os.path.exists(base_file):
         raise FileNotFoundError(f"Data file not found: {base_file}")
 
@@ -1192,8 +1223,7 @@ def preload_candle_data(
     warmup_minutes = warmup_candles * timeframe_minutes
     read_from = sdt - timedelta(minutes=warmup_minutes)
 
-    base_filename = f"{symbol}_{base_timeframe}.csv"
-    base_file = os.path.join(data_dir, base_filename)
+    base_file = _resolve_base_csv_path(symbol, base_timeframe, data_dir)
 
     if not os.path.exists(base_file):
         raise FileNotFoundError(f"Data file not found: {base_file}")
@@ -1327,8 +1357,7 @@ def preload_candle_data_aggregated(
     warmup_minutes = warmup_candles * target_timeframe_minutes
     read_from = sdt - timedelta(minutes=warmup_minutes)
 
-    base_filename = f"{symbol}_{base_timeframe}.csv"
-    base_file = os.path.join(data_dir, base_filename)
+    base_file = _resolve_base_csv_path(symbol, base_timeframe, data_dir)
 
     if not os.path.exists(base_file):
         raise FileNotFoundError(f"Data file not found: {base_file}")

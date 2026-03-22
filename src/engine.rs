@@ -14,7 +14,10 @@ use numpy::PyArray1;
 use crate::indicators::*;
 use crate::rl::{
     ObsFeatureType, ObsHistory, ObservationSpace, RlActionSpace, RlConfig, RewardFn,
-    observations::{DrawdownState, EngineState, IndicatorObsConfig, RawCandle, SmaRatioConfig},
+    observations::{
+        DrawdownState, EngineState, IndicatorObsConfig, MacdNormalizedConfig, RawCandle,
+        SmaRatioConfig,
+    },
     actions::{
         ContinuousActionSpace, DiscreteActionSpace, DiscreteWithSizingSpace,
     },
@@ -2019,9 +2022,10 @@ impl RustTradingEngine {
             "discrete_with_sizing" => {
                 let sl_pct = extract_f64(action_config, "sl_pct", 0.0);
                 let tp_pct = extract_f64(action_config, "tp_pct", 0.0);
-                // Default sizes
-                let sizes: Vec<(&str, f64)> =
-                    vec![("small", 0.05), ("medium", 0.1), ("large", 0.2)];
+                let mut sizes = extract_f64_list(action_config, "sizes");
+                if sizes.is_empty() {
+                    sizes = vec![0.05, 0.1, 0.2];
+                }
                 RlActionSpace::DiscreteWithSizing(DiscreteWithSizingSpace::new(
                     &sizes, sl_pct, tp_pct,
                 ))
@@ -2071,6 +2075,10 @@ impl RustTradingEngine {
                                 continue;
                             }
                         }
+                    }
+                    if let Some(cfg) = MacdNormalizedConfig::from_spec(&s) {
+                        features.push(ObsFeatureType::MacdNormalized(cfg));
+                        continue;
                     }
                     // Indicator shorthand: rsi_14, sma_20, ema_50, atr_14
                     if s.starts_with("rsi_") {
@@ -2666,6 +2674,16 @@ fn extract_string_list(dict: Option<&Bound<'_, PyDict>>, key: &str) -> Vec<Strin
             .ok()
             .flatten()
             .and_then(|v| v.extract::<Vec<String>>().ok())
+    })
+    .unwrap_or_default()
+}
+
+fn extract_f64_list(dict: Option<&Bound<'_, PyDict>>, key: &str) -> Vec<f64> {
+    dict.and_then(|d| {
+        d.get_item(key)
+            .ok()
+            .flatten()
+            .and_then(|v| v.extract::<Vec<f64>>().ok())
     })
     .unwrap_or_default()
 }
