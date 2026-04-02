@@ -41,7 +41,7 @@ from forge_engine.engine import (
     create_session, preload_candle_data_aggregated, _isoformat_z,
 )
 from forge_engine.optuna_optimizer import WalkForwardSplitter, WalkForwardConfig
-from evaluation.artifacts import evaluate_rl_model_on_period
+from evaluation.artifacts import build_model_eval_env, evaluate_rl_model_on_period
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.monitor import Monitor
@@ -183,7 +183,10 @@ def make_train_env(start_iso, end_iso):
 
 
 def evaluate_on_period(model, start_iso, end_iso, seed=42):
-    env = Monitor(make_env(start_iso, end_iso, max_steps_override=0))
+    env = build_model_eval_env(
+        lambda: Monitor(make_env(start_iso, end_iso, max_steps_override=0)),
+        model,
+    )
     try:
         return evaluate_rl_model_on_period(
             model,

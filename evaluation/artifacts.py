@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import copy
 from datetime import timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 
@@ -20,6 +21,7 @@ from forge_engine.indicators import (
 )
 from forge_engine.metrics import compute_metrics
 from forge_engine.trading import clear_engine as _clear_engine
+from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 
 
 def _round_list(values: List[float], ndigits: int) -> List[float]:
@@ -90,6 +92,60 @@ def build_equity_times(start_iso: str, periods: int, timeframe: str) -> List[str
     ]
 
 
+def build_model_eval_env(make_env: Callable[[], Any], model: Any) -> Any:
+    """Wrap eval env with the training VecNormalize statistics when present."""
+    get_vec_norm = getattr(model, "get_vec_normalize_env", None)
+    train_vec_norm = get_vec_norm() if callable(get_vec_norm) else None
+    if train_vec_norm is None:
+        return make_env()
+
+    eval_env = VecNormalize(
+        DummyVecEnv([make_env]),
+        training=False,
+        norm_obs=bool(getattr(train_vec_norm, "norm_obs", True)),
+        norm_reward=False,
+        clip_obs=float(getattr(train_vec_norm, "clip_obs", 10.0)),
+        clip_reward=float(getattr(train_vec_norm, "clip_reward", 10.0)),
+        gamma=float(getattr(train_vec_norm, "gamma", 0.99)),
+        epsilon=float(getattr(train_vec_norm, "epsilon", 1e-8)),
+    )
+    obs_rms = getattr(train_vec_norm, "obs_rms", None)
+    if obs_rms is not None:
+        eval_env.obs_rms = copy.deepcopy(obs_rms)
+    return eval_env
+
+
+def _reset_eval_env(env: Any, seed: int) -> tuple[Any, Dict[str, Any]]:
+    try:
+        reset_out = env.reset(seed=seed)
+    except TypeError:
+        if hasattr(env, "seed"):
+            env.seed(seed)
+        reset_out = env.reset()
+
+    if isinstance(reset_out, tuple) and len(reset_out) == 2:
+        obs, info = reset_out
+        return obs, dict(info)
+    return reset_out, {}
+
+
+def _step_eval_env(env: Any, action: Any) -> tuple[Any, float, bool, bool, Dict[str, Any]]:
+    step_out = env.step(action)
+    if len(step_out) == 5:
+        obs, reward, terminated, truncated, info = step_out
+        return obs, float(reward), bool(terminated), bool(truncated), dict(info)
+
+    obs, reward, done, info = step_out
+    reward_val = float(np.asarray(reward).reshape(-1)[0])
+    done_val = bool(np.asarray(done).reshape(-1)[0])
+
+    if isinstance(info, list):
+        info_val = dict(info[0]) if info else {}
+    else:
+        info_val = dict(info)
+    return obs, reward_val, done_val, False, info_val
+
+
 def evaluate_rl_model_on_period(
     model,
     env,
@@ -102,7 +158,7 @@ def evaluate_rl_model_on_period(
     deterministic: bool = True,
     max_steps_guard: int = 200_000,
 ) -> Dict[str, Any]:
-    obs, _info = env.reset(seed=seed)
+    obs, _info = _reset_eval_env(env, seed)
 
     equities: List[float] = [float(starting_cash)]
     done = False
@@ -111,7 +167,7 @@ def evaluate_rl_model_on_period(
 
     while not done:
         action, _ = model.predict(obs, deterministic=deterministic)
-        obs, _reward, terminated, truncated, info = env.step(action)
+        obs, _reward, terminated, truncated, info = _step_eval_env(env, action)
         equities.append(float(info.get("equity", equities[-1])))
         liquidated = liquidated or bool(info.get("is_liquidated"))
         done = bool(terminated or truncated)

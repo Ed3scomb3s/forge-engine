@@ -3,6 +3,8 @@
 **Code appendix for:** *Algorithmic Alpha in Crypto Futures: A Controlled Empirical Comparison of Reinforcement Learning and Human-Developed Control Strategies*
 **Author:** Etienne Descombes | **Supervisor:** Lorenzo Javier Martin Lopez | IE University, 2026
 
+Licensed under the MIT License. See [LICENSE](LICENSE).
+
 ## Overview
 
 - Deterministic, candle-based futures backtester with cross/isolated margin, fees, funding rates, TP/SL/liquidations, and slippage modeling.
@@ -58,20 +60,41 @@ tests/                   Test suite
 ## Setup
 
 ```bash
-# Install dependencies and build Rust extension
-uv sync
-uv run maturin develop --release
+# Use Python 3.13 for the current PyO3 build
+uv venv --python 3.13
+source .venv/bin/activate
+
+# Install dependencies and developer tooling
+uv sync --group dev
+
+# Build the Rust extension in-place
+maturin develop --release --skip-install
 ```
+
+`stable-baselines3[extra]` is intentionally not used here because it pulls in optional Atari dependencies that require extra system packages and are unrelated to this project.
 
 ## Data
 
-Place Binance perpetual futures 1-minute OHLCV CSV files in `data/`:
+The repository stores packaged market data archives in `data/`, but those files are tracked with Git LFS. Clone the repository directly if you want the packaged datasets:
+
+```bash
+git clone https://github.com/Ed3scomb3s/forge-engine.git
+cd forge-engine
+git lfs install
+git lfs pull
+```
+
+GitHub source ZIP downloads only contain LFS pointer files, not the actual dataset payloads.
+
+You can either use the packaged `data/*.zip` archives or place raw Binance perpetual futures 1-minute OHLCV CSV files in `data/`:
 - `BTCUSDT_PERP_1m.csv`
 - `ZECUSDT_PERP_1m.csv`
 
 Required columns: `open_time,open,high,low,close,volume,quote_asset_volume,number_of_trades,taker_buy_base_asset_volume,taker_buy_quote_asset_volume`
 
 Funding rate files (optional): `BTCUSDT_PERP_funding.csv`, `ZECUSDT_PERP_funding.csv`
+
+When the packaged zip archives are present, Forge Engine lazily extracts the required CSVs on first use.
 
 ## Usage
 
@@ -81,6 +104,9 @@ uv run python examples/sma_cross.py
 
 # Run tests
 uv run pytest tests/ -v
+
+# Train the final thesis RL agent
+uv run python evaluation/train_rl_v6.py --quick
 
 # Compare all strategies (requires result files)
 uv run python -m evaluation.compare
@@ -113,4 +139,5 @@ class MyStrategy(VectorStrategy):
 - Orders created at candle A are first eligible to fill at A+1.
 - Indicators are computed per candle after trading state is updated.
 - Set `close_at_end=True` when creating a session to auto-close positions on the final candle.
-- If you modify Rust source (`src/`), rebuild with: `uv run maturin develop --release`
+- `PPO_v6` now consumes explicit MACD line, signal, and histogram observations during training and evaluation.
+- If you modify Rust source (`src/`), rebuild with: `maturin develop --release --skip-install`
