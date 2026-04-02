@@ -15,8 +15,8 @@ use crate::indicators::*;
 use crate::rl::{
     ObsFeatureType, ObsHistory, ObservationSpace, RlActionSpace, RlConfig, RewardFn,
     observations::{
-        DrawdownState, EngineState, IndicatorObsConfig, MacdNormalizedConfig, RawCandle,
-        SmaRatioConfig,
+        BollingerContextConfig, DrawdownState, EngineState, IndicatorObsConfig,
+        MacdNormalizedConfig, RawCandle, SmaRatioConfig,
     },
     actions::{
         ContinuousActionSpace, DiscreteActionSpace, DiscreteWithSizingSpace,
@@ -2078,6 +2078,10 @@ impl RustTradingEngine {
                     }
                     if let Some(cfg) = MacdNormalizedConfig::from_spec(&s) {
                         features.push(ObsFeatureType::MacdNormalized(cfg));
+                        continue;
+                    }
+                    if let Some(cfg) = BollingerContextConfig::from_spec(&s) {
+                        features.push(ObsFeatureType::BollingerContext(cfg));
                         continue;
                     }
                     // Indicator shorthand: rsi_14, sma_20, ema_50, atr_14

@@ -148,6 +148,7 @@ pub enum ObsFeatureType {
     IndicatorObs(IndicatorObsConfig),
     SmaRatio(SmaRatioConfig),
     MacdNormalized(MacdNormalizedConfig),
+    BollingerContext(BollingerContextConfig),
     VolumeProfile,
 }
 
@@ -163,6 +164,7 @@ impl ObsFeatureType {
             Self::IndicatorObs(_) => 1,
             Self::SmaRatio(_) => 1,
             Self::MacdNormalized(_) => 1,
+            Self::BollingerContext(_) => 2,
             Self::VolumeProfile => 2,
         }
     }
@@ -185,6 +187,7 @@ impl ObsFeatureType {
             Self::IndicatorObs(cfg) => observe_indicator(indicators, cfg, out),
             Self::SmaRatio(cfg) => observe_sma_ratio(indicators, cfg, out),
             Self::MacdNormalized(cfg) => observe_macd_normalized(candle, indicators, cfg, out),
+            Self::BollingerContext(cfg) => observe_bollinger_context(candle, indicators, cfg, out),
             Self::VolumeProfile => observe_volume_profile(candle, history, out),
         }
     }
@@ -207,6 +210,7 @@ impl ObsFeatureType {
             Self::IndicatorObs(_) => vec![0.0],
             Self::SmaRatio(_) => vec![-0.5],
             Self::MacdNormalized(_) => vec![-10.0],
+            Self::BollingerContext(_) => vec![-1.0, 0.0],
             Self::VolumeProfile => vec![0.0, -1.0],
         }
     }
@@ -222,6 +226,7 @@ impl ObsFeatureType {
             Self::IndicatorObs(_) => vec![1.0],
             Self::SmaRatio(_) => vec![0.5],
             Self::MacdNormalized(_) => vec![10.0],
+            Self::BollingerContext(_) => vec![1.0, 1.0],
             Self::VolumeProfile => vec![1.0, 5.0],
         }
     }
@@ -331,6 +336,30 @@ fn expand_shorthand(key: &str) -> String {
         return format!("ATR({})", rest);
     }
     k.to_string()
+}
+
+pub struct BollingerContextConfig {
+    pub upper_key: String,
+    pub mid_key: String,
+    pub lower_key: String,
+}
+
+impl BollingerContextConfig {
+    pub fn from_spec(spec: &str) -> Option<Self> {
+        let lowered = spec.trim().to_lowercase();
+        let parts: Vec<&str> = lowered.split('_').collect();
+        if parts.len() != 4 || parts[0] != "bb" || parts[1] != "context" {
+            return None;
+        }
+        let period = parts[2].parse::<usize>().ok()?;
+        let mult = parts[3].parse::<usize>().ok()?;
+        let base = format!("BB({},{})[close]", period, mult);
+        Some(Self {
+            upper_key: format!("{}.upper", base),
+            mid_key: format!("{}.mid", base),
+            lower_key: format!("{}.lower", base),
+        })
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -525,6 +554,30 @@ fn observe_macd_normalized(
     let close = candle.close.max(EPS);
     let normalized_pct = (raw / close) * 100.0;
     out.push((normalized_pct as f32).clamp(-10.0, 10.0));
+}
+
+fn observe_bollinger_context(
+    candle: &RawCandle,
+    indicators: &BTreeMap<String, f64>,
+    cfg: &BollingerContextConfig,
+    out: &mut Vec<f32>,
+) {
+    let upper = indicators.get(&cfg.upper_key).copied();
+    let mid = indicators.get(&cfg.mid_key).copied();
+    let lower = indicators.get(&cfg.lower_key).copied();
+    match (upper, mid, lower) {
+        (Some(upper), Some(mid), Some(lower)) => {
+            let span = (upper - lower).max(EPS);
+            let position = ((candle.close - lower) / span) * 2.0 - 1.0;
+            let width = span / mid.abs().max(EPS);
+            out.push((position as f32).clamp(-1.0, 1.0));
+            out.push((width as f32).clamp(0.0, 1.0));
+        }
+        _ => {
+            out.push(0.0);
+            out.push(0.0);
+        }
+    }
 }
 
 fn observe_volume_profile(candle: &RawCandle, history: &ObsHistory, out: &mut Vec<f32>) {

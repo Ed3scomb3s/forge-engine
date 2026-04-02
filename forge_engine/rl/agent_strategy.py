@@ -74,7 +74,7 @@ class AgentStrategy(Strategy):
 
     def _infer_indicators(self) -> List[Indicator]:
         """Auto-create engine Indicator objects from observation specs."""
-        from ..indicators import SMA, EMA, RSI, ATR
+        from ..indicators import SMA, EMA, RSI, ATR, BollingerBands
 
         inds: List[Indicator] = []
         seen: set = set()
@@ -102,6 +102,13 @@ class AgentStrategy(Strategy):
                 period = int(s.split("_")[1])
                 inds.append(ATR(period=period))
                 seen.add(s)
+            elif s.startswith("bb_context_") and s not in seen:
+                parts = s.split("_")
+                if len(parts) == 4:
+                    period = int(parts[2])
+                    multiplier = int(parts[3])
+                    inds.append(BollingerBands(period=period, multiplier=multiplier))
+                    seen.add(s)
             elif s.startswith("sma_ratio_"):
                 parts = s.split("_")
                 if len(parts) == 4:

@@ -413,6 +413,55 @@ class MACDNormalized(ObsFeature):
 
 
 @dataclass
+class BollingerContext(ObsFeature):
+    """Bollinger-band position and relative band width."""
+
+    period: int = 20
+    multiplier: int = 2
+
+    def __post_init__(self):
+        mult = int(self.multiplier)
+        self.multiplier = max(mult, 1)
+        self._base = f"BB({self.period},{self.multiplier})[close]"
+
+    def name(self) -> str:
+        return f"bb_context_{self.period}_{self.multiplier}"
+
+    def size(self) -> int:
+        return 2
+
+    def low(self) -> np.ndarray:
+        return np.array([-1.0, 0.0], dtype=np.float32)
+
+    def high(self) -> np.ndarray:
+        return np.array([1.0, 1.0], dtype=np.float32)
+
+    def observe(self, candle: dict, state: dict, history: _ObsHistory) -> np.ndarray:
+        inds = state.get("indicators") or {}
+        upper = inds.get(f"{self._base}.upper")
+        mid = inds.get(f"{self._base}.mid")
+        lower = inds.get(f"{self._base}.lower")
+        if upper is None or mid is None or lower is None:
+            return np.zeros(2, dtype=np.float32)
+
+        upper = float(upper)
+        mid = float(mid)
+        lower = float(lower)
+        close = float(candle.get("close", 0.0) or 0.0)
+        band_span = max(upper - lower, 1e-10)
+        position = ((close - lower) / band_span) * 2.0 - 1.0
+        width = band_span / max(abs(mid), 1e-10)
+
+        return np.array(
+            [
+                np.clip(position, -1.0, 1.0),
+                np.clip(width, 0.0, 1.0),
+            ],
+            dtype=np.float32,
+        )
+
+
+@dataclass
 class VolumeProfile(ObsFeature):
     """Volume features: [taker_buy_ratio, volume_change_ratio].
 
@@ -487,6 +536,16 @@ def _parse_macd_spec(spec: str) -> Optional[Tuple[str, int, int, int]]:
     return None
 
 
+def _parse_bb_context_spec(spec: str) -> Optional[Tuple[int, int]]:
+    parts = spec.strip().lower().split("_")
+    if len(parts) != 4 or parts[0] != "bb" or parts[1] != "context":
+        return None
+    try:
+        return int(parts[2]), int(parts[3])
+    except ValueError:
+        return None
+
+
 def resolve_features(specs: Sequence[Any]) -> List[ObsFeature]:
     """Convert a list of feature specs into ObsFeature instances.
 
@@ -537,6 +596,12 @@ def resolve_features(specs: Sequence[Any]) -> List[ObsFeature]:
                     signal=signal,
                 )
             )
+            continue
+
+        bb_context = _parse_bb_context_spec(s)
+        if bb_context:
+            period, multiplier = bb_context
+            features.append(BollingerContext(period=period, multiplier=multiplier))
             continue
 
         # Indicator shorthand: "rsi_14", "sma_20", "ema_50", "atr_14"

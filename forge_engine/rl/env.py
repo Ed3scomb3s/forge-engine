@@ -122,6 +122,16 @@ def _extract_action_val(action: Any) -> float:
     return float(action)
 
 
+def _parse_bb_context_spec(spec: str) -> Optional[Tuple[int, int]]:
+    parts = spec.strip().lower().split("_")
+    if len(parts) == 4 and parts[0] == "bb" and parts[1] == "context":
+        try:
+            return int(parts[2]), int(parts[3])
+        except ValueError:
+            return None
+    return None
+
+
 def _parse_macd_spec(spec: str) -> Optional[Tuple[int, int, int]]:
     parts = spec.strip().lower().split("_")
     if len(parts) == 2 and parts[0] == "macd" and parts[1] in ("line", "signal", "hist"):
@@ -335,6 +345,20 @@ class ForgeEnv(gym.Env):
                 seen.add(s)
 
             else:
+                bb_spec = _parse_bb_context_spec(s)
+                if bb_spec:
+                    period, multiplier = bb_spec
+                    key = f"bb_{period}_{multiplier}"
+                    if key not in seen:
+                        eng.register_bollinger_bands(
+                            f"BB({period},{multiplier})[close]",
+                            period,
+                            float(multiplier),
+                            "close",
+                        )
+                        seen.add(key)
+                    continue
+
                 macd_spec = _parse_macd_spec(s)
                 if macd_spec:
                     fast, slow, signal = macd_spec
